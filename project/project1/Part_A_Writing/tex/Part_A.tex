@@ -1,0 +1,89 @@
+\documentclass[10pt,a4paper]{ctexart}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{epsfig}
+\usepackage{ifthen}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{graphics}
+\usepackage{float}
+\usepackage{caption,subcaption}
+\usepackage{graphicx}
+\usepackage{enumitem}
+
+\newlength{\la}
+\newlength{\lb}
+\newlength{\lc}
+\newlength{\ld}
+\newlength{\lhalf}
+\newlength{\lquarter}
+\newlength{\lmax}
+\newcommand{\xx}[4]{\\[.5pt]%
+\settowidth{\la}{A.~#1~~~}
+\settowidth{\lb}{B.~#2~~~}
+\settowidth{\lc}{C.~#3~~~}
+\settowidth{\ld}{D.~#4~~~}
+\ifthenelse{\lengthtest{\la > \lb}} {\setlength{\lmax}{\la}} {\setlength{\lmax}{\lb}}
+\ifthenelse{\lengthtest{\lmax < \lc}} {\setlength{\lmax}{\lc}} {}
+\ifthenelse{\lengthtest{\lmax < \ld}} {\setlength{\lmax}{\ld}} {}
+\setlength{\lhalf}{0.5\linewidth}
+\setlength{\lquarter}{0.25\linewidth}
+\ifthenelse{\lengthtest{\lmax > \lhalf}} {\noindent{}A.~#1 \\ B.~#2 \\ C.~#3 \\ D.~#4 } {
+\ifthenelse{\lengthtest{\lmax > \lquarter}} {\noindent\makebox[\lhalf][l]{A.~#1~~~}%
+\makebox[\lhalf][l]{B.~#2~~~}\par%
+\makebox[\lhalf][l]{C.~#3~~~}%
+\makebox[\lhalf][l]{D.~#4~~~}}%
+{\noindent\makebox[\lquarter][l]{A.~#1~~~}%
+\makebox[\lquarter][l]{B.~#2~~~}%
+\makebox[\lquarter][l]{C.~#3~~~}%
+\makebox[\lquarter][l]{D.~#4~~~}}}}
+\newcommand{\xz}[1][1]{\nolinebreak\mbox{(\hspace{1cm})}\\\vspace{-0.33cm}}
+\newcommand{\tk}[1][2.5]{\,\underline{\mbox{\hspace{#1 cm}}}\,}
+\newcommand{\dx}{\mathrm{d}x}
+\newcommand{\du}{\mathrm{d}u}
+\newcommand{\dr}{\mathrm{d}r}
+\newcommand{\dS}{\mathrm{d}S}
+\newcommand{\dtheta}{\mathrm{d}\theta}
+\newcommand{\dphi}{\mathrm{d}\phi}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+\newcommand{\Unif}{\operatorname{Unif}}
+\newcommand{\Beta}{\operatorname{Beta}}
+\newcommand{\Bin}{\operatorname{Bin}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\I}{\mathds{1}}
+
+
+
+
+
+\pagestyle{plain}
+\title{\Large{\textbf{上海科技大学\\
+2024-2025  强化学习应用实践}}\\
+Project1  Part-A}
+\author{姓名: \underline{\ \ \ \ \ \ \ \ \ 周守琛\ \ \ \ \ \ \ \ \ } \\ 学号: \underline{\ \ \ \ \ \ 2021533042\ \ \ \ \ \ }}
+
+\begin{document}
+\maketitle
+
+\newpage
+
+
+% \section*{强化学习考题设计}
+
+% \subsection*{统一设定}
+\input{problems/settings}
+\input{problems/p1}
+\input{problems/p2}
+
+\end{document}

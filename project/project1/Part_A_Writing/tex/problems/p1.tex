@@ -1,0 +1,38 @@
+\paragraph{1. 策略迭代(20分)}
+根据初始策略 \( \pi(s, a) = \dfrac{1}{2} \)，手动推导策略迭代第一轮的迭代步骤，包括策略评估和策略改进，写出：
+\begin{enumerate}
+    \item 第一轮策略评估的状态值函数 \( V(s) \)。(10分)
+    \item 改进后的新策略 \( \pi'(s) \)。(10分)
+\end{enumerate}
+
+\textcolor{blue}{Solution} \\
+
+We can get the value function's update rule:
+$$V(s) = \sum_{a} \pi(s, a) \left[R(s, a) + \gamma\sum_{s'} P(s'|s, a)V(s')\right]$$
+
+1. To get the value function $V(s)$ after the first policy evaluation, apply the formula to the initial policy, we have
+\begin{align*}
+V(s_1) &\gets \underbrace{\dfrac{1}{2} \left[1 + 0.9 \times \left(0.5 \times 0 + 0.5 \times 0\right)\right]}_{a=a_1} + \underbrace{\dfrac{1}{2} \left[2 + 0.9 \times \left(0.7 \times 0 + 0.3 \times 0\right)\right]}_{a=a_2} = 1.5 \\
+V(s_2) &\gets \underbrace{\dfrac{1}{2} \left[3 + 0.9 \times \left(0.6 \times 0 + 0.4 \times 0\right)\right]}_{a=a_1} + \underbrace{\dfrac{1}{2} \left[0 + 0.9 \times \left(0.8 \times 0 + 0.2 \times 0\right)\right]}_{a=a_2} = 1.5 \\
+V(s_3) &\gets 0
+\end{align*}
+
+2. To update the policy, we have the update rule
+$$\pi(s)=\arg\max\limits_{a} Q(s,a) =\arg\max\limits_{a} \sum\limits_{s'} P(s'|s, a)\left[R(s, a) + \gamma V(s')\right]=\arg\max\limits_{a} R(s,a)+\gamma\sum\limits_{s'} P(s'|s, a)V(s')$$
+
+\begin{itemize}
+\item $s=s_1, a=a_1$:
+$\sum_{s'} P(s'|s_1, a_1)V(s') = 1 + 0.9\times \left[\underbrace{0.5 \times 1.5}_{s'=s_2} + \underbrace{0.5 \times 0}_{s'=s_3}\right] = 1.675$
+\item $s=s_1, a=a_2$:
+$\sum_{s'} P(s'|s_1, a_2)V(s') = 2 + 0.9\times \left[\underbrace{0.7 \times 1.5}_{s'=s_1} + \underbrace{0.3 \times 0}_{s'=s_3}\right] = 2.945$
+\item $s=s_2, a=a_1$:
+$\sum_{s'} P(s'|s_2, a_1)V(s') = 3 + 0.9\times \left[\underbrace{0.6 \times 1.5}_{s'=s_1} + \underbrace{0.4 \times 0}_{s'=s_3}\right] = 3.81$
+\item $s=s_2, a=a_2$:
+$\sum_{s'} P(s'|s_2, a_2)V(s') = 0 + 0.9\times \left[\underbrace{0.8 \times 1.5}_{s'=s_1} + \underbrace{0.2 \times 0}_{s'=s_3}\right] = 1.08$
+\end{itemize}
+
+So the updated policy after the first policy improvement is
+$$\pi'(s_1) = a_2, \quad \pi'(s_2) = a_1$$
+Since $s_3$ is the terminal state, so it has no policy.
+
+\newpage

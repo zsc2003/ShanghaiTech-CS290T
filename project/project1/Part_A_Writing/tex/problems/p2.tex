@@ -1,0 +1,24 @@
+\paragraph{2. 价值迭代(20分)}
+根据给定的环境和初始值函数 \( V(s) = 0 \, \forall s \)，推导价值迭代第一轮的迭代步骤，写出：
+\begin{enumerate}
+    \item 每个状态的值函数 \( V(s) \)。(10分)
+    \item 相应的策略 \( \pi(s) \)。(10分)
+\end{enumerate}
+
+\textcolor{blue}{Solution} \\
+
+We can get the value function's update rule:
+$$V(s) = \max_{a} \left(R(s, a) + \gamma\sum_{s'} P(s'|s, a)V(s')\right)$$
+1. To get the value function $V(s)$ after the first policy evaluation, apply the formula to the initial policy, we have
+\begin{align*}
+V(s_1) &\gets \max\left(\underbrace{1 + 0.9 \times \left(0.5 \times 0 + 0.5 \times 0\right)}_{a=a_1}, \underbrace{2 + 0.9 \times \left(0.7 \times 0 + 0.3 \times 0\right)}_{a=a_2}\right) = \max(1,2) = 2 \\
+V(s_2) &\gets \max\left(\underbrace{3 + 0.9 \times \left(0.6 \times 0 + 0.4 \times 0\right)}_{a=a_1}, \underbrace{0 + 0.9 \times \left(0.8 \times 0 + 0.2 \times 0\right)}_{a=a_2}\right) = \max(3,0) = 3 \\
+V(s_3) &\gets 0
+\end{align*}
+
+2. The update policy is
+$$\pi(s) = \arg\max_{a} V(s)$$
+So the updated policy after the first policy improvement is
+$$\pi(s_1) = a_2, \quad \pi(s_2) = a_1$$
+
+\newpage

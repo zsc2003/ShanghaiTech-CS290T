@@ -1,0 +1,46 @@
+\begin{itemize}
+    \item \textbf{状态集合} \( S \): \( S = \{s_1, s_2, s_3\} \)
+    \item \textbf{动作集合} \( A \): \( A = \{a_1, a_2\} \)
+    \item \textbf{终止状态}: \( s_3 \) 为终止状态，不再执行动作。
+    \item \textbf{转移概率 \( P(s'|s, a) \)}:
+    \begin{itemize}
+        \item 从 \( s_1 \):
+        \[
+        P(s_2|s_1, a_1) = 0.5, \quad P(s_3|s_1, a_1) = 0.5
+        \]
+        \[
+        P(s_2|s_1, a_2) = 0.7, \quad P(s_3|s_1, a_2) = 0.3
+        \]
+        \item 从 \( s_2 \):
+        \[
+        P(s_1|s_2, a_1) = 0.6, \quad P(s_3|s_2, a_1) = 0.4
+        \]
+        \[
+        P(s_1|s_2, a_2) = 0.8, \quad P(s_3|s_2, a_2) = 0.2
+        \]
+        \item 从 \( s_3 \): 无后续转移（所有 \( P(s'|s_3, a) = 0 \)）。
+    \end{itemize}
+    \item \textbf{奖励函数 \( R(s, a) \)}:
+    \[
+    R(s_1, a_1) = 1, \quad R(s_1, a_2) = 2
+    \]
+    \[
+    R(s_2, a_1) = 3, \quad R(s_2, a_2) = 0
+    \]
+    \[
+    R(s_3, a) = 0 \quad \forall a
+    \]
+    \item \textbf{折扣因子 \( \gamma \)}: \( 0.9 \)
+    \item \textbf{初始策略 \( \pi(s, a) = \frac{1}{|A|} \)}:
+    所有非终止状态的动作选择均匀随机：
+    \[
+    \pi(s_1, a_1) = \pi(s_1, a_2) = 0.5, \quad \text{其余同理。}
+    \]
+    \item \textbf{初始值函数/状态-动作值函数}:
+    \[
+    V(s) = 0 \quad \forall s, \quad Q(s, a) = 0 \quad \forall s, a
+    \]
+    \item \textbf{学习率 \( \alpha = 0.1 \)}。
+\end{itemize}
+
+\newpage
