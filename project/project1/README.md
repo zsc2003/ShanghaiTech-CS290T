@@ -48,9 +48,9 @@ In our cliff walking experiment(a timer is added in the code), the policy iterat
 
 But for each iteration, the policy iteration requires ``0.023 / 189 = 1.22e-4s`` per iteration, while the value iteration requires ``0.006 / 14 = 4.29e-4s`` per iteration. Which means that the policy iteration less time per iteration.
 
-Value Iteration optimizes the value function directly through the Bellman optimal equation, which is an implicit strategy update. Each iteration simultaneously optimizes the value function and improves the strategy. The Cliff Walking environment is relatively simple and deterministic. Due to the clear direction of policy improvement, sparse rewards, and small state space, updating the value function can find the optimal policy with fewer iterations. Although it requires more time per iteration, it converges faster. 
+Value Iteration optimizes the value function directly through the Bellman optimal equation, which is an implicit strategy update. Each iteration simultaneously optimizes the value function and improves the strategy. The Cliff Walking environment is relatively simple and deterministic. Due to the clear direction of policy improvement, sparse rewards, and small state space, updating the value function can find the optimal policy with fewer iterations. Although it requires more time per iteration, it converges faster.
 
-Policy Iteration is explicit policy update, which requires policy evaluation until the value function converges, and then policy improvement. In sparse reward environments, the policy evaluation phase of Policy Iteration may waste a significant amount of time on unimportant states, resulting in high computational costs. Although it requires less time per iteration, it requires much more iterations and converges slower. 
+Policy Iteration is explicit policy update, which requires policy evaluation until the value function converges, and then policy improvement. In sparse reward environments, the policy evaluation phase of Policy Iteration may waste a significant amount of time on unimportant states, resulting in high computational costs. Although it requires less time per iteration, it requires much more iterations and converges slower.
 
 
 (Q1)20 + (Q2)20 + (Q3)10 + (Q4)10 + (Q5)10 = 70 pts
