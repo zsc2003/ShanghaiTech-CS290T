@@ -59,8 +59,8 @@ def train_on_policy_agent(env, agent, num_episodes):
 def train_off_policy_agent(env, agent, num_episodes, replay_buffer, minimal_size, batch_size):
     return_list = []
     for i in range(10):
-        with tqdm(total=int(num_episodes/10), desc='Iteration %d' % i) as pbar:
-            for i_episode in range(int(num_episodes/10)):
+        with tqdm(total=int(num_episodes / 10), desc='Iteration %d' % i) as pbar:
+            for i_episode in range(int(num_episodes / 10)):
                 episode_return = 0
                 state = env.reset()
                 done = False
