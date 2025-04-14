@@ -42,51 +42,32 @@ class RMAPPO():
 
         # Calculate the clipped value predictions by adjusting the old predictions with the current predictions.
         # Ensuring the adjustment is within the specified clipping range.
-        """ YOUR CODE HERE """
-
-
-
+        value_pred_clipped = values + torch.clamp(value_preds_batch - self.clip_param, value_preds_batch + self.clip_param)
 
 
         # Update the value normalizer with the current returns to ensure proper normalization for loss calculation.
         # You may use 'self.value_normalizer' here.
-        """ YOUR CODE HERE """
-
-
-
-
+        self.value_normalizer.update(return_batch)
+        return_batch_normalized = self.value_normalizer.normalize(return_batch)
 
 
         # Compute the errors for both the clipped and original predictions by normalizing the returns \
         # and subtracting the respective value predictions.
-        """ YOUR CODE HERE """
-
-
-
-
-
+        error_clipped = return_batch_normalized - value_pred_clipped
+        error_original = return_batch_normalized - values
 
 
         # Calculate the value losses using *Huber loss* for both the clipped and original errors.
-        # You may use 'utils.util.huber_loss' here.
-        """ YOUR CODE HERE """
-
-
-
-
-
+        value_loss_clipped = huber_loss(error_clipped, self.huber_delta)
+        value_loss_original = huber_loss(error_original, self.huber_delta)
 
 
         # The final value loss is the maximum of the clipped and original losses, averaged over the batch.
-        """ YOUR CODE HERE """
+        value_loss = torch.max(value_loss_original, value_loss_clipped).mean()
 
 
+        return value_loss
 
-
-
-
-
-        # return value_loss
 
     def ppo_update(self, sample, update_actor=True):
         """
@@ -119,25 +100,34 @@ class RMAPPO():
                                                                             masks_batch)
         # Actor Update
         # You may use 'self.policy.actor_optimizer' to update the actor network.
-        """ YOUR CODE HERE """
+        imp_weights = torch.exp(action_log_probs - old_action_log_probs_batch)
 
+        policy_loss_origin = adv_targ * imp_weights
+        policy_loss_clipped = adv_targ * torch.clamp(imp_weights, 1.0 - self.clip_param, 1.0 + self.clip_param)
+        policy_loss = torch.min(policy_loss_origin, policy_loss_clipped).mean()
+        #  use gradient **ascent** -> negative for gradient **descent**
+        actor_loss = -policy_loss - dist_entropy * self.entropy_coef
 
-
-
-
-
+        self.policy.actor_optimizer.zero_grad()
+        if update_actor:
+            actor_loss.backward()
+            self.policy.actor_optimizer.step()
+            actor_grad_norm = nn.utils.clip_grad_norm_(self.policy.actor.parameters(), self.max_grad_norm)
+        else:
+            actor_grad_norm = 0
 
         # Critic Update
         # You may use 'self.policy.critic_optimizer' to update the critic network.
-        """ YOUR CODE HERE """
+        value_loss = self.cal_value_loss(values, value_preds_batch, return_batch)
+        value_loss = value_loss * self.value_loss_coef
+
+        self.policy.critic_optimizer.zero_grad()
+        value_loss.backward()
+        self.policy.critic_optimizer.step()
+        critic_grad_norm = nn.utils.clip_grad_norm_(self.policy.critic.parameters(), self.max_grad_norm)
 
 
-
-
-
-
-
-        # return value_loss, critic_grad_norm, policy_loss, dist_entropy, actor_grad_norm, imp_weights
+        return value_loss, critic_grad_norm, policy_loss, dist_entropy, actor_grad_norm, imp_weights
 
     def train(self, buffer, update_actor=True):
         """

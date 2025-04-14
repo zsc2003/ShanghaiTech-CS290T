@@ -17,11 +17,11 @@ def solve_nash(R_matrix):
     b_ub = np.zeros(D)
     A_eq = np.zeros([D,D])
     b_eq = np.zeros(D)
-    A_eq[0,:]=1
-    b_eq[0]=1
-    c=np.ones(D)
+    A_eq[0, :] = 1
+    b_eq[0] = 1
+    c = np.ones(D)
 
-    re=linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=(0,1))
+    re=linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=(0, 1))
 
     nash_p = np.maximum(re.x, 0) # just to make sure non-negative weights
 
@@ -30,16 +30,15 @@ def solve_nash(R_matrix):
 
 # Evaluate the average reward of policy p1 on p2 through multiple simulations
 def estimate_reward(env, num_episodes, p1, p2):
-    R = 0  #Accumulated total reward
+    R = 0  # Accumulated total reward
     for i in range(num_episodes):
-        ############################
-        # YOUR IMPLEMENTATION HERE #
-        ############################
-        pass
-
-
-
-
+        state, _ = env.reset(opponent=p2, train=True)
+        while True:
+            action = p1.step(state)
+            state, r, terminated, truncated, _ = env.step(action)
+            if terminated or truncated:
+                R += r
+                break
 
     return R / num_episodes
 
@@ -61,18 +60,17 @@ def gamescape(env, pi, Ne):
     R [i, j] is the reward of policy i for policy j. (Note R should be an antisymmetric matrix with all diagonal elements being 0)
     You may use estimate_reward(env,Ne,Agent(pi[i]),Agent(pi[j]) to get R[i,j].
     """
-    ############################
-    # YOUR IMPLEMENTATION HERE #
-    ############################
 
-
-
+    for i in range(len((pi))):
+        for j in range(i + 1, len(pi)):
+            R[i,j] = estimate_reward(env, Ne, Agent(pi[i]), Agent(pi[j]))
+            R[j,i] = -R[i,j]
 
     return R
 
 
 # PSRO algorithm framework
-def PSRO_Q(env, num_iters=1000, num_steps_per_iter = 10000, eps=0.1, alpha=0.1, save_interval=1, evaluation_episodes=1000):
+def PSRO_Q(env, num_iters=1000, num_steps_per_iter=10000, eps=0.1, alpha=0.1, save_interval=1, evaluation_episodes=1000):
 
     # initialize a list as policys pool, the first policy is [0.1, 0.2, 0.7] (only needs to focus on the first row)
     pi =  np.array([[[0.1, 0.2, 0.7], [1., 0., 0.], [0., 0., 1.]]])
@@ -87,45 +85,42 @@ def PSRO_Q(env, num_iters=1000, num_steps_per_iter = 10000, eps=0.1, alpha=0.1, 
         nash_p = solve_nash(R)
 
         # eval exploitability
-        nash_pi = nash_p.reshape(-1,1,1) * pi
+        nash_pi = nash_p.reshape(-1, 1, 1) * pi
         nash_pi = nash_pi.sum(0) # The current Nash equilibrium policy
 
 
         expl = exploitability_nash(env, nash_pi, pi, Ne=evaluation_episodes)
-        div = (nash_p.reshape(1,-1)@np.maximum(R,0)@nash_p.reshape(-1,1))[0,0]
+        div = (nash_p.reshape(1, -1) @ np.maximum(R, 0) @ nash_p.reshape(-1, 1))[0, 0]
 
 
         # train a new agent by Q-learning, The opponent adopts the current Nash equilibrium policy
         Q = np.random.randn(env.observation_space.n, env.action_space.n) * 1e-2  # reset Q
         Q[-env.n_ternimal:] = 0 # terminal states to 0
         env.reset(opponent=Agent(nash_pi), train=True)
+
         """
         You may use tabular_Q() to get the Q-table of the policy trained, and then process this Q-table into the form of a policy we used.
         The policy you got needs to be named as "beta".
         """
-        ############################
-        # YOUR IMPLEMENTATION HERE #
-        ############################
 
-
-
-
-
-
+        Q = tabular_Q(env=env, num_steps=num_steps_per_iter, Q=Q, epsilon=eps, alpha=alpha)
+        # Note that when win/lose happens, an episode would be ended. so for the matrix of policy "pi", only need to focus on the first row
+        # which is the probability of the agent taking each action in the game state of “ongoing 0”.
+        beta = np.eye(pi.shape[1])[np.argmax(Q, axis=1)]
 
 
         # check criteria for early stopping
-        stop=0
+        stop = 0
         for pi_i in pi:
             if (pi_i == beta).all():
                 print("policy exhausted, early stopping")
-                stop=1
+                stop = 1
                 break
         if stop:
             break
 
         # append policy to policys pool
-        pi = np.concatenate([pi,np.expand_dims(beta, 0)], 0)
+        pi = np.concatenate([pi, np.expand_dims(beta, 0)], 0)
 
         desc = f"expl={round(expl,4)}, div={round(div,4)}, nash={nash_pi[0]}| Iter"
 
@@ -133,7 +128,7 @@ def PSRO_Q(env, num_iters=1000, num_steps_per_iter = 10000, eps=0.1, alpha=0.1, 
         pbar.refresh()
 
         # save data
-        if niter % save_interval==0:
+        if niter % save_interval == 0:
             expls.append(expl)
             divs.append(div)
 
