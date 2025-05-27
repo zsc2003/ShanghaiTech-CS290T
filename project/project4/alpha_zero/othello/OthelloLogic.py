@@ -26,7 +26,7 @@ class Board():
 
         # Set up the initial 4 pieces.
         self.pieces[int(self.n / 2) - 1][int(self.n / 2)] = 1
-        self.pieces[int(self.n / 2)][int(self.n / 2)-1] = 1
+        self.pieces[int(self.n / 2)][int(self.n / 2) - 1] = 1
         self.pieces[int(self.n / 2) - 1][int(self.n / 2) - 1] = -1
         self.pieces[int(self.n / 2)][int(self.n / 2)] = -1
 
@@ -90,7 +90,7 @@ class Board():
         for direction in self.__directions:
             move = self._discover_move(square, direction)
             if move:
-                # print(square,move,direction)
+                # print(square,move, direction)
                 moves.append(move)
 
         # return the generated move list
@@ -110,7 +110,7 @@ class Board():
                         for flip in self._get_flips(move, direction, color)]
         assert len(list(flips)) > 0
         for x, y in flips:
-            # print(self[x][y],color)
+            # print(self[x][y], color)
             self[x][y] = color
 
     def _discover_move(self, origin, direction):
@@ -123,7 +123,7 @@ class Board():
         for x, y in Board._increment_move(origin, direction, self.n):
             if self[x][y] == 0:
                 if flips:
-                    # print("Found", x,y)
+                    # print("Found", x, y)
                     return (x, y)
                 else:
                     return None
@@ -160,5 +160,5 @@ class Board():
         while all(map(lambda x: 0 <= x < n, move)):
         # while 0 <= move[0] and move[0] < n and 0 <= move[1] and move[1] < n:
             yield move
-            move=list(map(sum,zip(move, direction)))
+            move = list(map(sum, zip(move, direction)))
             # move = (move[0] + direction[0], move[1] + direction[1])

@@ -49,7 +49,7 @@ class GreedyOthelloPlayer():
         valids = self.game.getValidMoves(board, 1)
         candidates = []
         for a in range(self.game.getActionSize()):
-            if valids[a]==0:
+            if valids[a] == 0:
                 continue
             nextBoard, _ = self.game.getNextState(board, 1, a)
             score = self.game.getScore(nextBoard, 1)
@@ -83,7 +83,7 @@ class GTPOthelloPlayer():
         Should be called before the game starts in order to setup the board.
         """
         self._currentPlayer = 1 # Arena does not notify players about their colour so we need to keep track here
-        self._process = subprocess.Popen(self.gtpClient, bufsize = 0, stdin = subprocess.PIPE, stdout = subprocess.PIPE)
+        self._process = subprocess.Popen(self.gtpClient, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         self._sendCommand("boardsize " + str(self.game.n))
         self._sendCommand("clear_board")
 
