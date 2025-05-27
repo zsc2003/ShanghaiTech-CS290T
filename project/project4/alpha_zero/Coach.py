@@ -40,9 +40,9 @@ class Coach():
         uses temp=0.
 
         Returns:
-            trainExamples: a list of examples of the form (canonicalBoard, currPlayer, pi,v)
-                            pi is the MCTS informed policy vector, v is +1 if
-                            the player eventually won the game, else -1.
+            trainExamples: a list of examples of the form (canonicalBoard, currPlayer, pi, v)
+            pi is the MCTS informed policy vector, v is +1 if
+            the player eventually won the game, else -1.
         """
         trainExamples = []
         board = self.game.getInitBoard()
@@ -55,11 +55,7 @@ class Coach():
             temp = int(episodeStep < self.args.tempThreshold)
 
             # Execute an MCTS to obtain policy pi
-            """Your code here"""
-
-
-
-
+            pi = self.mcts.getActionProb(canonicalBoard, temp=temp)
 
 
             sym = self.game.getSymmetries(canonicalBoard, pi)
@@ -67,19 +63,16 @@ class Coach():
                 trainExamples.append([b, self.curPlayer, p, None])
 
             # sample an action from the policy pi and move to the next action
-            """Your code here"""
-
-
-
+            action = np.random.choice(self.game.getActionSize(), p=pi)
+            board, self.curPlayer = self.game.getNextState(board, self.curPlayer, action)
 
             # self-play until the end of the game with a final reward
             # extract necessary data from trainExamples, return a bunch of examples (state, policy, reward)
             # NOTICE: the sign of reward is determined by the current player at that step
-            """Your code here"""
+            reward = self.game.getGameEnded(board, self.curPlayer)
 
-
-
-
+            if reward != 0:
+                return [(x[0], x[2], reward * ((-1) ** (x[1] != self.curPlayer))) for x in trainExamples]
 
 
     def learn(self):
@@ -106,8 +99,7 @@ class Coach():
             self.trainExamplesHistory.append(iterationTrainExamples)
 
             if len(self.trainExamplesHistory) > self.args.numItersForTrainExamplesHistory:
-                log.warning(
-                    f"Removing the oldest entry in trainExamples. len(trainExamplesHistory) = {len(self.trainExamplesHistory)}")
+                log.warning(f"Removing the oldest entry in trainExamples. len(trainExamplesHistory) = {len(self.trainExamplesHistory)}")
                 self.trainExamplesHistory.pop(0)
 
             # shuffle examples before training
